@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
 
 import IconButton from '../UI/IconButton.jsx';
 import MinusIcon from '../UI/Icons/MinusIcon.jsx';
@@ -27,9 +27,9 @@ function isPrime(number) {
   return true;
 }
 
-export default function Counter({ initialCount }) {
+const Counter = memo(function Counter({ initialCount }) {
   log('<Counter /> rendered', 1);
-  const initialCountIsPrime = isPrime(initialCount);
+  const initialCountIsPrime = useMemo(() => isPrime(initialCount), [initialCount]);
 
   const [counter, setCounter] = useState(initialCount);
 
@@ -58,4 +58,14 @@ export default function Counter({ initialCount }) {
       </p>
     </section>
   );
-}
+});
+
+
+export default Counter;
+
+
+// memo works for scenarios like the child component is not affected by any of the props of parent component but child gets re-rendered 
+//when parent is changed due to a value in that component state.
+// so memo compares the previous and current values of props and will not let child re-render if the are same
+// useMemo is a hook used to stop the re-execution of the js methods and should be used onl if there are complex calculations
+//eg:useMemo(() => isPrime(initialCount), []);
